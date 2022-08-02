@@ -17,6 +17,9 @@ describe('Car Service', () => {
 			.onCall(0).resolves(carMockWithId)
 			.onCall(1).resolves(null)
 			.onCall(2).resolves(carMockWithId);
+		sinon.stub(carModel, 'delete')
+    	.onCall(0).resolves(carMockWithId)
+    	.onCall(1).resolves(null);
 	})
 	after(() => {
 		sinon.restore()
@@ -50,6 +53,21 @@ describe('Car Service', () => {
 				await carService.readOne(carMockWithId._id);
 			} catch (error:any) {
 				expect(error).to.be.deep.equal(ErrorTypes.EntityNotFound);
+			}
+		});
+	});
+
+	describe('Delete Car', () => {
+		it('Success', async () => {
+			const frames = await carService.delete(carMockWithId._id);
+			expect(frames).to.be.deep.equal(carMockWithId);
+		});
+
+		it('Failure', async () => {
+			try {
+				await carService.delete(carMockWithId._id);
+			} catch (error: any) {
+				expect(error.message).to.be.deep.equal(ErrorTypes.EntityNotFound);
 			}
 		});
 	});
